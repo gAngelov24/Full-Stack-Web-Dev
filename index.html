@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Plan your UIUC Courses confindently with IlliniPlan">
+        <meta name="author" content="George Angelov">
+        <title>IlliniPlan</title>
+        <link rel="icon" type="image/x-icon" href="university-of-illinois-1.svg">
+    </head>
+    <body>
+        <h1>IlliniPlan</h1>
+        <p>Welcome to ILLINIPlan! Enter you major, any minor(s), concentration(s) etc. Select how many years you anticipate it will take to graduate and then enter your classes! Once you have finished your plan, you can save it as well as verify if your plan fulfills all the requirments of your major, minor(s), and concentrion(s)!</p>
+        
+        <label for="major">Select Your Major:</label>
+        <div id="major-selectors">
+            <select id="major1" class="major-dropdown">
+                <option value="">--Choose a major--</option>
+            </select>
+            <div id="concentration-container" style="display:none; margin-top:10px;">
+                <label for="concentration">Select Your Concentration:</label>
+                <select id="concentration">
+                    <option value="">--Choose a concentration--</option>
+                </select>
+            </div>
+        </div>
+        <button id="add-major-btn">+</button>
+        <script src="majors.js"></script>
+
+        <br>
+        <label for="minor">Select Your Minor:</label>
+        <div id="minor-selectors">
+            <select id="minor1" class="minor-dropdown">
+                <option value="">--Choose a minor--</option>
+            </select>
+        </div>
+        <button id="add-minor-btn">+</button>
+        <script src="minors.js"></script>
+    </body>
+</html>
