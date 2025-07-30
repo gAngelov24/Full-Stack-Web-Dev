@@ -171,5 +171,5 @@ addMinorBtn.addEventListener('click', function () {
         if (minorSelectorsDiv.querySelectorAll('.minor-dropdown').length === 2) {
             addMinorBtn.disabled = true;
         }
-    }
+    } 
 });

@@ -310,7 +310,7 @@ const majorToConcentrations = {
     "Interdisciplinary Studies, BALAS": [
         "Jewish Studies",
         "Medieval Studies"
-    ],
+    ], 
     "Kinesiology, BS": [
         "Teacher Education (K-12)"
     ],
