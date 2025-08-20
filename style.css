@@ -400,3 +400,40 @@ input:focus {
         padding: 15px;
     }
 }
+
+.semester-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.semester-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.semester-btn {
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.semester-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.semester-btn.add-btn {
+    color: #27ae60; /* Green */
+}
+
+.semester-btn.remove-btn {
+    color: #c0392b; /* Red */
+}

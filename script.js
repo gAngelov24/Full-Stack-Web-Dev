@@ -1,5 +1,5 @@
 let courses = {};
-let currentPlan = {};
+let currentPlan = [];
 let selectedSemester = null;
 let planGenerated = false;
 
@@ -137,25 +137,20 @@ function setupEventListeners() {
 
 function generatePlan() {
     const major = document.getElementById('major-select').value;
-    const planLength = document.getElementById('plan-length').value;
+    const planLength = parseInt(document.getElementById('plan-length').value);
 
     if (!major) {
         alert('Please select a major first!');
         return;
     }
 
-    currentPlan = {};
-    const grid = document.getElementById('planner-grid');
-    grid.innerHTML = '';
-
-    for (let year = 1; year <= parseInt(planLength); year++) {
-        for (let semester of ['Fall', 'Spring', 'Summer']) {
-            const semesterKey = `${semester} ${year}`;
-            currentPlan[semesterKey] = [];
-            createSemesterElement(semesterKey);
-        }
+    currentPlan = [];
+    for (let i = 1; i <= planLength; i++) {
+        currentPlan.push({ year: i, term: 'Fall', courses: [] });
+        currentPlan.push({ year: i, term: 'Spring', courses: [] });
+        currentPlan.push({ year: i, term: 'Summer', courses: [] });
     }
-
+    renderPlannerGrid();
     document.getElementById('course-search').style.display = 'block';
     document.getElementById('summary-stats').style.display = 'grid';
     document.getElementById('validation-panel').style.display = 'block';
@@ -164,7 +159,7 @@ function generatePlan() {
     updateSummary();
     validateRequirements();
 }
-
+/*
 function createSemesterElement(semesterKey) {
     const grid = document.getElementById('planner-grid');
     const semesterDiv = document.createElement('div');
@@ -179,10 +174,96 @@ function createSemesterElement(semesterKey) {
                 <div class="course-slot" onclick="openModal('${semesterKey}')">+ Add Course</div>
             `;
     grid.appendChild(semesterDiv);
+}*/
+
+function renderPlannerGrid() {
+    const grid = document.getElementById('planner-grid');
+    grid.innerHTML = '';
+
+    currentPlan.forEach(
+        (semester, index) => {
+            const semesterKey = `${semester.term} ${semester.year}`;
+            const semesterDiv = document.createElement('div');
+            semesterDiv.className = 'semester';
+
+            semesterDiv.innerHTML = `
+                <div class="semester-header">
+                    <span>${semesterKey}</span>
+                    <div class="semester-controls">
+                        <button class="semester-btn remove-btn" title="Remove Semester" onclick="removeSemester(${index})">&ndash;</button>
+                        <button class="semester-btn add-btn" title="Add Semester" onclick="addSemester(${index})">+</button>
+                    </div>
+                </div>
+            `;
+
+            semester.courses.forEach(
+                (courseCode, courseIndex) => {
+                    const course = courses[courseCode];
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'course-slot course-filled';
+                    slotDiv.innerHTML = `
+                    <div class="course-info">
+                        <div class="course-code">${courseCode}</div>
+                        <div class="course-name">${course.name}</div>
+                    </div>
+                    <div class="course-credits">${course.credits}</div>
+                    <button class="remove-course" onclick="removeCourse(${index}, ${courseIndex})">&times;</button>
+                `; //// course.credits might need to be changed ////
+                    semesterDiv.appendChild(slotDiv);
+                });
+            for (let i = semester.courses.length; i < 6; i++) {
+                const slotDiv = document.createElement('div');
+                slotDiv.className = 'course-slot';
+                slotDiv.innerHTML = `+ Add Course`;
+                slotDiv.onclick = () => openModal(index);
+                semesterDiv.appendChild(slotDiv);
+            }
+            grid.appendChild(semesterDiv);
+        }
+    );
 }
 
-function openModal(semesterKey) {
-    selectedSemester = semesterKey;
+function addSemester(index) {
+    const currentSemester = currentPlan[index];
+    let newYear = currentSemester.year;
+    let newTerm = 'Spring';
+
+    if (currentSemester.term === 'Spring') {
+        newTerm = 'Summer';
+        newYear = currentSemester.year;
+    }
+    if (currentSemester.term === 'Summer') {
+        newTerm = 'Fall';
+        newYear = currentSemester.year + 1;
+    }
+    if (currentSemester.term === 'Fall') {
+        newTerm = 'Spring';
+        newYear = currentSemester.year;
+    }
+    const newSemester = { year: newYear, term: newTerm, courses: [] };
+    currentPlan.splice(index + 1, 0, newSemester);
+
+    renderPlannerGrid();
+    updateSummary();
+    validateRequirements();
+}
+
+function removeSemester(index) {
+    if (currentPlan.length <= 1) {
+        alert('You cannot remove the last semester!');
+        return;
+    }
+    if (confirm(`Are you sure you want to remove ${currentPlan[index].term} ${currentPlan[index].year}?`)) {
+        currentPlan.splice(index, 1);
+
+        renderPlannerGrid();
+        updateSummary();
+        validateRequirements();
+    }
+}
+
+function openModal(index) {
+    selectedSemesterIndex = index;
     document.getElementById('course-modal').style.display = 'block';
     document.getElementById('modal-search').focus();
 }
@@ -233,10 +314,9 @@ function handleModalSearch(event) {
 }
 
 function quickAddCourse(courseCode) {
-    for (let semesterKey of Object.keys(currentPlan)) {
-        if (currentPlan[semesterKey].length < 6) {
-            selectedSemester = semesterKey;
-            addCourseWithValidation(courseCode);
+    for (let i = 0; i < currentPlan.length; i++) {
+        if (currentPlan[i].courses.length < 6) {
+            addCourse(courseCode, i);
             document.getElementById('search-input').value = '';
             document.getElementById('search-results').style.display = 'none';
             return;
@@ -245,54 +325,30 @@ function quickAddCourse(courseCode) {
     alert('All semesters are full! Please remove a course first.');
 }
 
-function addCourse(courseCode) {
-    if (!selectedSemester) return;
-
-    if (currentPlan[selectedSemester].length >= 6) {
-        alert('This semester is full!');
+function addCourse(courseCode, semesterIndex) {
+    const targetIndex = (semesterIndex !== undefined) ? semesterIndex : selectedSemesterIndex;
+    if (targetIndex === null) return;
+    if (currentPlan[targetIndex].courses.length >= 6) {
+        alert('This semester is full');
         return;
     }
+    currentPlan[targetIndex].courses.push(courseCode);
 
-    currentPlan[selectedSemester].push(courseCode);
-    updateSemesterDisplay(selectedSemester);
+    renderPlannerGrid();
+    updateSummary();
+    validateRequirements();
+    closeModal();
+}
+
+function removeCourse(semesterIndex, courseIndex) {
+    currentPlan[semesterIndex].courses.splice(courseIndex, 1);
+    renderPlannerGrid();
     updateSummary();
     validateRequirements();
 }
 
-function removeCourse(semesterKey, courseIndex) {
-    currentPlan[semesterKey].splice(courseIndex, 1);
-    updateSemesterDisplay(semesterKey);
-    updateSummary();
-    validateRequirements();
-}
 
-function updateSemesterDisplay(semesterKey) {
-    const semesterIndex = Object.keys(currentPlan).indexOf(semesterKey);
-    const semesterDiv = document.querySelectorAll('.semester')[semesterIndex];
-    const slots = semesterDiv.querySelectorAll('.course-slot');
-
-    currentPlan[semesterKey].forEach((courseCode, index) => {
-        if (slots[index]) {
-            const course = courses[courseCode];
-            slots[index].innerHTML = `
-                        <div class="course-info">
-                            <div class="course-code">${courseCode}</div>
-                            <div class="course-name">${course.name}</div>
-                        </div>
-                        <div class="course-credits">${course.credits}</div>
-                        <button class="remove-course" onclick="removeCourse('${semesterKey}', ${index})">&times;</button>
-                    `;
-            slots[index].className = 'course-slot course-filled';
-        }
-    });
-
-    for (let i = currentPlan[semesterKey].length; i < slots.length; i++) {
-        slots[i].innerHTML = '+ Add Course';
-        slots[i].className = 'course-slot';
-        slots[i].onclick = () => openModal(semesterKey);
-    }
-}
-
+/////       THIS FUNCTION NEEDS TO BE UPDATED       /////
 function updateSummary() {
     if (!planGenerated) return;
 
@@ -305,7 +361,9 @@ function updateSummary() {
     if (!majorName || !majors[majorName]) return;
     const majorReqs = majors[majorName];
 
-    Object.values(currentPlan).flat().forEach(courseCode => {
+    const allPlannedCourses = currentPlan.flatMap(semester => semester.courses);
+    
+    allPlannedCourses.forEach(courseCode => {
         const course = courses[courseCode];
         if (course) {
             totalCredits += course.credits;
@@ -337,7 +395,7 @@ function validateRequirements() {
     const minorName = document.getElementById('minor-select').value;
     const resultsDiv = document.getElementById('validation-results');
 
-    const allCourses = Object.values(currentPlan).flat();
+    const allCourses = currentPlan.flatMap(semester => semester.courses);
     const majorReqs = majors[majorName];
     let validationHTML = '';
 
@@ -380,6 +438,8 @@ function validateRequirements() {
     resultsDiv.innerHTML = validationHTML;
 }
 
+
+/////         EXPORT AND IMPORT FUNCTION NEED A CLOSER LOOK       /////
 function exportPlan() {
     if (!planGenerated) {
         alert('Please generate a plan first!');
@@ -443,35 +503,43 @@ function importPlan() {
     input.click();
 }
 
-function checkPrerequisites(courseCode, semesterKey) {
+function checkPrerequisites(courseCode, semesterIndex) {
     const course = courses[courseCode];
     if (!course || !course.prerequisites || course.prerequisites.length === 0) {
         return true;
     }
 
-    const semesterKeys = Object.keys(currentPlan);
-    const currentSemesterIndex = semesterKeys.indexOf(semesterKey);
-    const pastCourses = semesterKeys.slice(0, currentSemesterIndex).flatMap(key => currentPlan[key]);
-
-    // Check if every prerequisite course is included in the list of past courses
+    const pastCourses = currentPlan.slice(0, semesterIndex).flatMap(sem => sem.courses);
     return course.prerequisites.every(prereq => pastCourses.includes(prereq));
 }
 
 function addCourseWithValidation(courseCode) {
-    if (!selectedSemester) return;
+    const course = courses[courseCode];
+    if (!course || !course.prerequisites || course.prerequisites.length === 0) {
+        return true;
+    }
 
-    if (currentPlan[selectedSemester].length >= 6) {
+    // Get all courses taken in semesters *before* the current one
+    const pastCourses = currentPlan.slice(0, semesterIndex).flatMap(sem => sem.courses);
+
+    return course.prerequisites.every(prereq => pastCourses.includes(prereq));
+}
+
+function addCourseWithValidation(courseCode) {
+    if (selectedSemesterIndex === null) return;
+
+    if (currentPlan[selectedSemesterIndex].courses.length >= 6) {
         alert('This semester is full!');
         return;
     }
 
-    const allCoursesInPlan = Object.values(currentPlan).flat();
+    const allCoursesInPlan = currentPlan.flatMap(sem => sem.courses);
     if (allCoursesInPlan.includes(courseCode)) {
         alert('This course is already in your plan!');
         return;
     }
 
-    if (!checkPrerequisites(courseCode, selectedSemester)) {
+    if (!checkPrerequisites(courseCode, selectedSemesterIndex)) {
         const course = courses[courseCode];
         const prereqList = course.prerequisites.join(', ');
         const confirmAdd = confirm(`Warning: Prerequisites not met for ${courseCode}.\nRequired: ${prereqList}\n\nAdd anyway?`);
@@ -481,8 +549,16 @@ function addCourseWithValidation(courseCode) {
         }
     }
 
-    addCourse(courseCode);
+    addCourse(courseCode, selectedSemesterIndex);
     closeModal();
+}
+
+window.addEventListener('DOMContentLoaded', fetchCourseData);
+window.onclick = function (event) {
+    const modal = document.getElementById('course-modal');
+    if (event.target === modal) {
+        closeModal();
+    }
 }
 
 // Load data when the page is ready
