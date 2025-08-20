@@ -75,10 +75,12 @@ async function fetchAllCourseData() {
         for (const [index, subject] of subjects.entries()) {
             const subjectId = subject.id;
             
+            /*
             if (allCourses[`${subjectId} 100`] || allCourses[`${subjectId} 101`]) {
                 console.log(`[${index + 1}/${subjects.length}] Subject ${subjectId} already processed. Skipping.`);
                 continue;
             }
+            */
             
             console.log(`[${index + 1}/${subjects.length}] Processing subject ${subjectId}... ${Date.now() / 1000}`);
 
