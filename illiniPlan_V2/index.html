@@ -1,85 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>IlliniPlan</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="icon" type="image/x-icon" href="university-of-illinois-1.svg" />
-    </head>
-    <body>
-        <div class="app-container">
-            <div class="sidebar">
-                <div class="logo">
-                    <div class="logo-icon">🎓</div>
-                    <div class="logo-text">
-                        <h1>IlliniPlan</h1>
-                        <p>UIUC Course Planner</p>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IlliniPlan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="university-of-illinois-1.svg" />
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <div class="logo-text">
+                    <h1>IlliniPlan</h1>
+                    <p>UIUC Course Planner</p>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Planning Tools</div>
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-section="plan-builder">
+                    <span class="icon">📋</span>
+                    Plan Builder
+                </a>
+                <a href="#" class="nav-item" data-section="course-browser">
+                    <span class="icon">🔍</span>
+                    Course Browser
+                </a>
+                <a href="#" class="nav-item" data-section="requirements">
+                    <span class="icon">📚</span>
+                    Requirements
+                </a>
+                <a href="#" class="nav-item" data-section="profile">
+                    <span class="icon">👤</span>
+                    Profile
+                </a>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">U</div>
+                <div class="user-info">
+                    <h4>UIUC Student</h4>
+                    <p>Plan your path to graduation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div class="content-section active" id="dashboard">
+                <div class="header">
+                    <div class="header-left">
+                        <h1>Academic Dashboard</h1>
+                        <p>Track your progress and plan your path to graduation</p>
+                    </div>
+                    <div class="header-right">
+                        <button class="btn" onclick="showSection('plan-builder')">
+                            <span class="icon">➕</span>
+                            Create New Plan
+                        </button>
                     </div>
                 </div>
-                <div class="nav-section">
-                    <div class="nav-title">Planning Tools</div>
-                    <a href="#" class="nav-item active" data-section="dashboard">
-                        <span class="icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="#" class="nav-item" data-section="plan-builder">
-                        <span class="icon">📋</span>
-                        Plan Builder
-                    </a>
-                    <a href="#" class="nav-item" data-section="course-browser">
-                        <span class="icon">🔍</span>
-                        Course Browser
-                    </a>
-                    <a href="#" class="nav-item" data-section="requirements">
-                        <span class="icon">📚</span>
-                        Requirements
-                    </a>
-                    <a href="#" class="nav-item" data-section="profile">
-                        <span class="icon">👤</span>
-                        Profile
-                    </a>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Total Plans</div>
+                            <div class="stat-icon" style="background: #3498db;">📋</div>
+                        </div>
+                        <div class="stat-value" id="total-plans">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Courses Planned</div>
+                            <div class="stat-icon" style="background: #27ae60;">📚</div>
+                        </div>
+                        <div class="stat-value" id="courses-planned">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Plan Progress</div>
+                            <div class="stat-icon" style="background: #9b59b6;">🎯</div>
+                        </div>
+                        <div class="stat-value" id="plan-progress">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Years to Graduate</div>
+                            <div class="stat-icon" style="background: #e74c3c;">📈</div>
+                        </div>
+                        <div class="stat-value" id="years-to-graduate">-</div>
+                    </div>
                 </div>
-                <div class="user-profile">
-                    <div class="user-avatar">U</div>
-                    <div class="user-info">
-                        <h4>UIUC Student</h4>
-                        <p>Plan your path to graduation</p>
+
+                <div class="dashboard-content">
+                    <div class="plans-section">
+                        <div class="section-title">
+                            <span class="icon">📅</span>
+                            My Academic Plans
+                        </div>
+                        <div class="empty-state" id="plans-empty">
+                            <div class="empty-icon">🎓</div>
+                            <div class="empty-title">No plans yet</div>
+                            <div class="empty-subtitle">Create your first academic plan to get started</div>
+                            <button class="btn" onclick="showSection('plan-builder')">
+                                <span class="icon">➕</span>
+                                Create Plan
+                            </button>
+                        </div>
+                        <div id="plans-list" style="display: none;">
+                            <!-- Plans will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <div class="section-title">Quick Actions</div>
+                        <a href="#" class="action-item" onclick="showSection('course-browser')">
+                            <div class="action-icon">📚</div>
+                            <div>
+                                <div style="font-weight: 600;">Browse Courses</div>
+                                <div style="font-size: 12px; color: #666;">Find courses for your plan</div>
+                            </div>
+                        </a>
+                        <a href="#" class="action-item" onclick="showSection('requirements')">
+                            <div class="action-icon">📋</div>
+                            <div>
+                                <div style="font-weight: 600;">Check Requirements</div>
+                                <div style="font-size: 12px; color: #666;">Review degree requirements</div>
+                            </div>
+                        </a>
+                        <a href="#" class="action-item" onclick="showSection('profile')">
+                            <div class="action-icon">⏰</div>
+                            <div>
+                                <div style="font-weight: 600;">Update Profile</div>
+                                <div style="font-size: 12px; color: #666;">Manage your information</div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="main-content">
-                <div class="content-section active" id="dashboard">
-                    <div class="header">
-                        <div class="header-left">
-                            <h1>Academic Dashboard</h1>
-                            <p>Track your progress and plan your path to graduation</p>
-                        </div>
-                        <div class="header-right">
-                            <button class="btn" onclick="showSection('plan-builder')">
-                                <span class="icon">➕</span>
-                                Create New Plan
-                            </button>
+
+            <!-- Plan Builder Section -->
+            <div class="content-section" id="plan-builder">
+                <div class="header">
+                    <div class="header-left" style="display: flex; align-items: center;">
+                        <button class="back-btn" onclick="showSection('dashboard')">←</button>
+                        <div>
+                            <h1>Create New Plan</h1>
+                            <p>Build your academic roadmap</p>
                         </div>
                     </div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Total Plans</div>
-                                <div class="stat-icon" style="background: #3498db;">📋</div>
-                            </div>
-                            <div class="stat-value" id="total-plans">0</div>
+                    <div class="header-right">
+                        <button class="btn btn-success">
+                            <span class="icon">💾</span>
+                            Save Plan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="plan-builder">
+                    <div class="tab-navigation">
+                        <button class="tab active" onclick="showTab('setup')">Plan Setup</button>
+                        <button class="tab" onclick="showTab('planner')">Course Planner</button>
+                        <button class="tab" onclick="showTab('search')">Course Search</button>
+                    </div>
+
+                    <!-- Plan Setup Tab -->
+                    <div class="tab-content active" id="setup-tab">
+                        <div class="section-title">
+                            <span class="icon">⚙️</span>
+                            Plan Configuration
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Courses Planned</div>
-                                <div class="stat-icon" style="background: #27ae60;">📚</div>
-                            </div>
-                            <div class="stat-value" id="courses-planned">0</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Plan Name</label>
+                            <input type="text" class="form-control" placeholder="e.g., My CS Degree Plan"
+                                id="plan-name">
                         </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Major</label>
+                                <select class="form-control" id="major-select">
+                                    <option value="">Select your major</option>
+                                    <option value="cs">Computer Science</option>
+                                    <option value="ee">Electrical Engineering</option>
+                                    <option value="me">Mechanical Engineering</option>
+                                    <option value="math">Mathematics</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="business">Business</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Plan Duration</label>
+                                <select class="form-control" id="duration-select">
+                                    <option value="4">4 Years</option>
+                                    <option value="3">3 Years</option>
+                                    <option value="5">5 Years</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Minors</label>
+                                <select class="form-control" id="minor-select">
+                                    <option value="">Add a minor</option>
+                                    <option value="stats">Statistics</option>
+                                    <option value="business">Business</option>
+                                    <option value="music">Music</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Concentrations</label>
+                                <select class="form-control" id="concentration-select">
+                                    <option value="">Add concentration</option>
+                                    <option value="ai">Artificial Intelligence</option>
+                                    <option value="systems">Systems</option>
+                                    <option value="theory">Theory</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="continue-btn btn btn-secondary" onclick="showTab('search')">
+                            Continue to Planner
+                        </button>
+                    </div>
+
+                    <!-- Course Planner Tab -->
+                    <div class="tab-content" id="planner-tab">
+                        <div class="section-title">
+                            <span class="icon">📅</span>
+                            Course Planner
+                        </div>
+                        <div class="empty-state">
+                            <div class="empty-icon">📚</div>
+                            <div class="empty-title">Plan your courses by semester</div>
+                            <div class="empty-subtitle">Use the Course Search tab to find and add courses to your plan
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Search Tab -->
+                    <div class="tab-content" id="search-tab">
+                        <div class="section-title">
+                            <span class="icon">🔍</span>
+                            Course Search
+                        </div>
+
+                        <div class="course-search">
+                            <div class="search-filters">
+                                <input type="text" class="form-control" placeholder="Search courses..."
+                                    id="course-search-input">
+                                <select class="form-control">
+                                    <option>All Departments</option>
+                                    <option>Computer Science</option>
+                                    <option>Mathematics</option>
+                                    <option>Physics</option>
+                                </select>
+                                <select class="form-control">
+                                    <option>All Levels</option>
+                                    <option>100-level</option>
+                                    <option>200-level</option>
+                                    <option>300-level</option>
+                                    <option>400-level</option>
+                                </select>
+                                <select class="form-control">
+                                    <option>Select semester to add to</option>
+                                    <option>Fall 2024</option>
+                                    <option>Spring 2025</option>
+                                    <option>Fall 2025</option>
+                                </select>
+                            </div>
+
+                            <div class="course-results">
+                                <div class="empty-icon">📚</div>
+                                <div class="empty-title">No courses found</div>
+                                <div class="empty-subtitle">Try adjusting your search criteria</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Browser Section -->
+            <div class="content-section" id="course-browser">
+                <div class="header">
+                    <div class="header-left">
+                        <h1>Course Browser</h1>
+                        <p>Explore available courses and requirements</p>
+                    </div>
+                </div>
+                <div class="plans-section">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">Course Browser</div>
+                        <div class="empty-subtitle">Search and explore courses across all departments</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirements Section -->
+            <div class="content-section" id="requirements">
+                <div class="header">
+                    <div class="header-left">
+                        <h1>Requirements</h1>
+                        <p>View degree and program requirements</p>
+                    </div>
+                </div>
+                <div class="plans-section">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">Degree Requirements</div>
+                        <div class="empty-subtitle">Track your progress towards degree completion</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="content-section" id="profile">
+                <div class="header">
+                    <div class="header-left">
+                        <h1>Profile</h1>
+                        <p>Manage your account and preferences</p>
+                    </div>
+                </div>
+                <div class="plans-section">
+                    <div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <div class="empty-title">Student Profile</div>
+                        <div class="empty-subtitle">Update your information and preferences</div>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+
+    <script scr="majors.js"></script>
+    <script scr="minors.js"></script>
+    <script src="script.js"></script>
+</body>
 </html>
