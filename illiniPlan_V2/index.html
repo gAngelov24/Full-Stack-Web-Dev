@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>IlliniPlan</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/x-icon" href="university-of-illinois-1.svg" />
+    </head>
+    <body>
+        <div class="app-container">
+            <div class="sidebar">
+                <div class="logo">
+                    <div class="logo-icon">🎓</div>
+                    <div class="logo-text">
+                        <h1>IlliniPlan</h1>
+                        <p>UIUC Course Planner</p>
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-title">Planning Tools</div>
+                    <a href="#" class="nav-item active" data-section="dashboard">
+                        <span class="icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-item" data-section="plan-builder">
+                        <span class="icon">📋</span>
+                        Plan Builder
+                    </a>
+                    <a href="#" class="nav-item" data-section="course-browser">
+                        <span class="icon">🔍</span>
+                        Course Browser
+                    </a>
+                    <a href="#" class="nav-item" data-section="requirements">
+                        <span class="icon">📚</span>
+                        Requirements
+                    </a>
+                    <a href="#" class="nav-item" data-section="profile">
+                        <span class="icon">👤</span>
+                        Profile
+                    </a>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <h4>UIUC Student</h4>
+                        <p>Plan your path to graduation</p>
+                    </div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="content-section active" id="dashboard">
+                    <div class="header">
+                        <div class="header-left">
+                            <h1>Academic Dashboard</h1>
+                            <p>Track your progress and plan your path to graduation</p>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn" onclick="showSection('plan-builder')">
+                                <span class="icon">➕</span>
+                                Create New Plan
+                            </button>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Total Plans</div>
+                                <div class="stat-icon" style="background: #3498db;">📋</div>
+                            </div>
+                            <div class="stat-value" id="total-plans">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Courses Planned</div>
+                                <div class="stat-icon" style="background: #27ae60;">📚</div>
+                            </div>
+                            <div class="stat-value" id="courses-planned">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
